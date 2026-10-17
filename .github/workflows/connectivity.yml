@@ -1,0 +1,30 @@
+name: Data source connectivity
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test East Money and Tencent
+        run: |
+          python - <<'PY'
+          import time
+          import urllib.request
+
+          urls = [
+              "https://fund.eastmoney.com/js/fundcode_search.js",
+              "https://fundf10.eastmoney.com/jbgk_510300.html",
+              "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh510300,day,,,5,qfq",
+          ]
+          for url in urls:
+              started = time.time()
+              try:
+                  req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      data = response.read()
+                      print(url, "->", response.status, len(data), f"{time.time() - started:.2f}s")
+              except Exception as exc:
+                  print(url, "-> FAIL", type(exc).__name__, str(exc)[:200], f"{time.time() - started:.2f}s")
+          PY
