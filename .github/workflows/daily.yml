@@ -38,6 +38,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r code/requirements.txt
 
+      - name: Seed fund profile cache
+        run: |
+          mkdir -p code/work/cache
+          cp code/seed/fund_profiles.csv code/work/cache/fund_profiles.csv
+
       - name: Run daily pipeline
         run: python code/outputs/run_daily_update.py --skip-github
 
